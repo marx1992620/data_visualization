@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Visualization</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    table {
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Data Visualization</h1>
+
+  <div>
+    <label for="dataInput1">输入数据1（逗号分隔）：</label>
+    <input type="text" id="dataInput1">
+    <br>
+    <label for="dataInput2">输入数据2（逗号分隔）：</label>
+    <input type="text" id="dataInput2">
+  </div>
+
+  <div style="margin-top: 10px;">
+    <button onclick="generatePieChart()">生成圆饼图</button>
+    <button onclick="generateLineChart()">生成折线图</button>
+    <button onclick="generateBarChart()">生成柱状图</button>
+    <button onclick="generateHorizontalBarChart()">生成横条图</button>
+    <button onclick="generateCombinedLineAndBarChart()">生成折线图和柱状图</button>
+  </div>
+
+  <!-- 画布用于绘制图表 -->
+  <canvas id="myChart" width="350" height="350" style="width: 400px; height: 400px;"></canvas>
+  <canvas id="combinedChart" width="350" height="350" style="width: 400px; height: 400px; display: none;"></canvas>
+
+  <!-- 数据表格 -->
+  <table id="dataTable" style="margin-top: 20px;">
+    <thead>
+      <tr>
+        <th>数据组1</th>
+        <th>数据组2</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <script>
+    let myChart; // 存储图表实例
+
+    function getDataFromInput() {
+      const inputData1 = document.getElementById('dataInput1').value;
+      const data1 = inputData1.split(',').map(Number);
+      
+      const inputData2 = document.getElementById('dataInput2').value;
+      const data2 = inputData2.split(',').map(Number);
+
+      return [data1, data2];
+    }
+
+    function generatePieChart() {
+      const data = getDataFromInput()[0];
+
+      // 销毁之前的图表
+      if (myChart) {
+        myChart.destroy();
+      }
+      
+      // 创建圆饼图
+      const ctx = document.getElementById('myChart').getContext('2d');
+      myChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: data.map((_, index) => `数据${index + 1}`),
+          datasets: [{
+            label: '我的数据',
+            data: data,
+            backgroundColor: [
+              'rgba(255, 0, 0, 0.5)',
+              'rgba(0, 0, 255, 0.5)',
+              'rgba(255, 255, 0, 0.5)',
+              'rgba(0, 255, 0, 0.5)',
+              'rgba(128, 0, 128, 0.5)',
+              'rgba(255, 165, 0, 0.5)',
+              'rgba(255, 192, 203, 0.5)',
+              'rgba(0, 255, 255, 0.5)',
+              'rgba(255, 0, 255, 0.5)',
+              'rgba(0, 128, 128, 0.5)'
+            ]
+          }]
+        },
+        options: {
+          responsive: false,
+          maintainAspectRatio: false
+        }
+      });
+
+      // 渲染数据表格
+      renderDataTable();
+    }
+
+    function generateLineChart() {
+      const [data1, data2] = getDataFromInput();
+
+      // 销毁之前的图表
+      if (myChart) {
+        myChart.destroy();
+      }
+      
+      // 创建折线图
+      const ctx = document.getElementById('myChart').getContext('2d');
+      myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: data1.map((_, index) => `数据${index + 1}`),
+          datasets: [{
+            label: '数据组1',
+            data: data1,
+            borderColor: 'rgba(0, 0, 255, 0.5)',
+            backgroundColor: 'rgba(173, 216, 230, 0.5)',
+            fill: false
+          }, {
+            label: '数据组2',
+            data: data2,
+            borderColor: 'rgba(255, 0, 0, 0.5)',
+            backgroundColor: 'rgba(255, 192, 203, 0.5)',
+            fill: false
+          }]
+        },
+        options: {
+          responsive: false,
+          maintainAspectRatio: false
+        }
+      });
+    }
+
+    function generateBarChart() {
+      const [data1, data2] = getDataFromInput();
+
+      // 销毁之前的图表
+      if (myChart) {
+        myChart.destroy();
+      }
+      
+      // 创建柱状图
+      const ctx = document.getElementById('myChart').getContext('2d');
+      myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: data1.map((_, index) => `数据${index + 1}`),
+          datasets: [{
+            label: '数据组1',
+            data: data1,
+            backgroundColor: 'rgba(0, 0, 255, 0.5)',
+          }, {
+            label: '数据组2',
+            data: data2,
+            backgroundColor: 'rgba(255, 0, 0, 0.5)',
+          }]
+        },
+        options: {
+          responsive: false,
+          maintainAspectRatio: false
+        }
+      });
+    }
+
+    function generateHorizontalBarChart() {
+      const [data1, data2] = getDataFromInput();
+
+      // 销毁之前的图表
+      if (myChart) {
+        myChart.destroy();
+      }
+      
+      // 创建水平柱状图
+      const ctx = document.getElementById('myChart').getContext('2d');
+      myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: data1.map((_, index) => `数据${index + 1}`),
+          datasets: [{
+            label: '数据组1',
+            data: data1,
+            backgroundColor: 'rgba(0, 0, 255, 0.5)',
+          }, {
+            label: '数据组2',
+            data: data2,
+            backgroundColor: 'rgba(255, 0, 0, 0.5)',
+          }]
+        },
+        options: {
+          responsive: false,
+          maintainAspectRatio: false,
+          indexAxis: 'y' // 设置y轴为索引轴，实现水平显示
+        }
+      });
+    }
+
+    function generateCombinedLineAndBarChart() {
+      const [data1, data2] = getDataFromInput();
+
+      // 销毁之前的图表
+      if (myChart) {
+        myChart.destroy();
+      }
+      
+      // 创建折线图和柱状图
+      const ctx = document.getElementById('combinedChart').getContext('2d');
+      myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: data1.map((_, index) => `数据${index + 1}`),
+          datasets: [{
+            label: '数据组1',
+            data: data1,
+            backgroundColor: 'rgba(0, 0, 255, 0.5)',
+          }, {
+            label: '数据组2',
+            data: data2,
+            backgroundColor: 'rgba(255, 0, 0, 0.5)',
+          }]
+        },
+        options: {
+          responsive: false,
+          maintainAspectRatio: false,
+          indexAxis: 'y' // 设置y轴为索引轴，实现水平显示
+        }
+      });
+
+      // 渲染数据表格
+      renderDataTable();
+    }
+
+    function renderDataTable() {
+      const [data1, data2] = getDataFromInput();
+      const dataTable = document.getElementById('dataTable').getElementsByTagName('tbody')[0];
+      dataTable.innerHTML = '';
+      const maxLength = Math.max(data1.length, data2.length);
+      for (let i = 0; i < maxLength; i++) {
+        const newRow = dataTable.insertRow();
+        newRow.insertCell().textContent = i < data1.length ? data1[i] : '';
+        newRow.insertCell().textContent = i < data2.length ? data2[i] : '';
+      }
+    }
+  </script>
+</body>
+</html>
